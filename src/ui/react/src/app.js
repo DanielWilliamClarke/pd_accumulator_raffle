@@ -1,5 +1,6 @@
-var React = require('react');
-var ReactDOM = require('react-dom');
+import React from 'react';
+import ReactDOM from 'react-dom';
+import Countdown from 'react-countdown-now';
 
 require("./style.css");
 
@@ -10,25 +11,69 @@ class Root extends React.Component {
 
     // Define the initial state:
     this.state = {
-      backendText: false
+      round: 0,
+      selectedParticipant: null,
+      scoreBoard: []
     };
   }
 
-  updateBackendText(message) {
+  updateBackendText(round, selectedParticipant, scoreBoard) {
     this.setState({
-      backendText: message
+      round: round,
+      selectedParticipant: selectedParticipant,
+      scoreBoard: scoreBoard
     });
   }
   
   render() {
+
+    let scoreBoardDom = <h1>Awaiting Scores</h1>
+    if(this.state.scoreBoard.length) {
+      scoreBoardDom = this.state.scoreBoard.map(sb => {
+        return <li>
+          <span>
+            {sb.participant}
+          </span>
+          <span>
+            {sb.score}
+          </span>
+          </li>
+      })
+    }
+    
+    let selectedParticipantDom = <h1>Awaiting Winner</h1>
+    if(this.state.selectedParticipant) {
+      selectedParticipantDom = <div className="winner">
+        <h2 className="heading">
+          Round {this.state.round}
+        </h2>
+        <h2 className="heading">
+          Winner: {this.state.selectedParticipant.participant}! 
+        </h2>
+        <h3 className="heading">
+          Score: {this.state.selectedParticipant.score}
+        </h3>
+      </div>
+    }
+
     return(
       <div>
-        <h1 className="topic">
-          Hello Gotron / React
+        <h1 className="countdown">
+          <div>
+            <Countdown date={Date.now() + (1000 * 20)} /> 
+          </div>
+          <div>
+            Until Next Draw!
+          </div>
         </h1>
-        <h2 className="topic">
-          {this.state.backendText}
-        </h2>
+
+        {selectedParticipantDom}
+        
+        <h1>Raffle Scores:</h1>
+        <ul className="raffle_score_board">
+          <li><span>Participant</span><span>Score</span></li>
+          {scoreBoardDom}
+        </ul>
       </div>
     )
   }
@@ -44,21 +89,16 @@ window.onload = function () {
   ws.onmessage = (message) => {
     let obj = JSON.parse(message.data);
 
-    component.updateBackendText(obj.AtrNameInFrontend)
     // event name
     console.log(obj.event);
     // event data
-    console.log(obj.AtrNameInFrontend);
-  }
+    console.log(obj.update);
 
-  //Reload on keypress 'r'
-  document.addEventListener('keyup', function(e){
-    if(e.keyCode == 82)
-      ws.send(JSON.stringify({
-        "event": "hello-back",
-        "AtrNameInFrontend": "Hello backend!",
-      }))
-    })
+    component.updateBackendText(
+      obj.update.round,
+      obj.update.selectedParticipant,
+      obj.update.scoreBoard)
+  }
 }
 
 

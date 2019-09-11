@@ -1,61 +1,31 @@
 package main
 
 import (
-	"fmt"
+	"io/ioutil"
 	"log"
-	"time"
+	"strings"
 
-	"github.com/Equanox/gotron"
+	"github.com/danielwilliamclarke/raffle/accumulator"
 )
-
-// Create a custom event struct that has a pointer to gotron.Event
-type CustomEvent struct {
-	*gotron.Event
-	CustomAttribute string `json:"AtrNameInFrontend"`
-}
 
 func main() {
 
+	participantStr, err := ioutil.ReadFile("./participants.txt")
+	if err != nil {
+		log.Fatalf("No such participants file: %v", err)
+	}
+
+	participants := strings.Split(string(participantStr), "\n")
+	pariticpantScores := accumulator.ParseParticiapants(participants)
+
 	// Create a new browser window instance
-	window, err := gotron.New("ui/build")
-	if err != nil {
-		log.Println(err)
-		return
+	window, done := accumulator.CreateWindow("ui/build")
+
+	raffler := accumulator.Raffler{
+		Participants: pariticpantScores,
+		Window:       window,
 	}
-
-	window.WindowOptions.Width = 1200
-	window.WindowOptions.Height = 600
-	window.WindowOptions.Title = "Gotron"
-
-	done, err := window.Start()
-	if err != nil {
-		log.Println(err)
-		return
-	}
-
-	onEvent := gotron.Event{Event: "hello-back"}
-	window.On(&onEvent, func(bin []byte) {
-
-		log.Println("received hello")
-		log.Println(string(bin))
-
-		window.Send(&CustomEvent{
-			Event:           &gotron.Event{Event: "hello-front"},
-			CustomAttribute: fmt.Sprintf("Hello frontend! - %s", time.Now()),
-		})
-	})
-
-	//window.OpenDevTools()
+	go raffler.Run()
 
 	<-done
-
-	// read input file of names
-
-	// for each time interval pick a name from the list using some kind of random number generator
-	// add a point to that list
-
-	// show timer until next pick
-	// show picked name
-	// show live scorebord
-
 }
