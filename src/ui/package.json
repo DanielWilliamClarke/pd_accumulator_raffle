@@ -1,0 +1,25 @@
+{
+  "name": "gotron-ui",
+  "description": "Golang & Electron Boilerplate for Platform Independent Desktop Apps ",
+  "version": "0.0.1",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/equanox/gotron.git"
+  },
+  "author": "equanox",
+  "scripts": {
+    "install": "npm run install:ui:react",
+    "install:ui:react": "cd react && npm install",
+    "clean": "del-cli -f react/node_modules && del-cli -f node_modules || exit 0",
+    "build:react": "cd react && npm run build",
+    "postbuild:react": "cpy react/build/*.js build/js/ && echo Build Ui {react}, cp bundle.js to build/bundle.js",
+    "test": "npm run clean && npm install && npm run build:react"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "cpy-cli": "^2.0.0",
+    "cross-env": "^5.2.0",
+    "del-cli": "^1.1.0"
+  }
+}
