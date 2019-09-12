@@ -11,7 +11,7 @@ class Root extends React.Component {
 
     // Define the initial state:
     this.state = {
-      round: "-",
+      round: "Awaiting",
       goldenRound: {
         next: false,
         now: false

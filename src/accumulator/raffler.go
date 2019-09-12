@@ -57,7 +57,7 @@ func (r Raffler) Run() {
 
 	elaspedTime := time.Duration(0)
 	regularInterval := 20 * time.Second
-	goldenInterval := 40 * time.Second
+	goldenInterval := 300 * time.Second
 
 	for {
 
