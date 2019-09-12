@@ -3,3 +3,5 @@ gotron
 node_modules
 react/build
 bundle.js
+src/raffle.exe
+ui/build/js/*

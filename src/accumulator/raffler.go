@@ -52,7 +52,7 @@ func (r Raffler) Run() {
 
 	elaspedTime := time.Duration(0)
 	regularInterval := 20 * time.Second
-	goldenInterval := 5 * time.Minute
+	goldenInterval := 300 * time.Second
 
 	for {
 
@@ -60,8 +60,10 @@ func (r Raffler) Run() {
 
 		round++
 		elaspedTime += regularInterval
+		log.Printf("Round: %d --------------------------------------- Time Elapsed: %s", round, elaspedTime)
+
 		goldenRoundNext := false
-		if elaspedTime > 0 && elaspedTime%goldenInterval-regularInterval == 0 {
+		if elaspedTime == goldenInterval-regularInterval {
 			log.Printf("Golden Round in %s seconds", regularInterval)
 			goldenRoundNext = true
 		}

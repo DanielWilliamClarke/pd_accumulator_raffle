@@ -11,7 +11,7 @@ class Root extends React.Component {
 
     // Define the initial state:
     this.state = {
-      round: 0,
+      round: "-",
       goldenRoundNext: false,
       selectedParticipant: null,
       scoreBoard: []
@@ -102,6 +102,12 @@ window.onload = function () {
 
     component.update(obj.update)
   }
+
+  //Reload on keypress 'r'
+document.addEventListener('keyup', function(e){
+  if(e.keyCode == 82)
+    window.location.reload();
+  })
 }
 
 
