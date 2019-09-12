@@ -14,7 +14,7 @@ func CreateWindow(uiPath string) (*gotron.BrowserWindow, chan bool) {
 	}
 
 	window.WindowOptions.Width = 1200
-	window.WindowOptions.Height = 600
+	window.WindowOptions.Height = 1000
 	window.WindowOptions.Title = "Gotron"
 
 	done, err := window.Start()

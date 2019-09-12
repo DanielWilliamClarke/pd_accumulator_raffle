@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 203);
+/******/ 	return __webpack_require__(__webpack_require__.s = 202);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -10279,6 +10279,7 @@ var Root = function (_React$Component) {
 
     _this.state = {
       round: 0,
+      goldenRoundNext: false,
       selectedParticipant: null,
       scoreBoard: []
     };
@@ -10286,40 +10287,25 @@ var Root = function (_React$Component) {
   }
 
   _createClass(Root, [{
-    key: 'updateBackendText',
-    value: function updateBackendText(round, selectedParticipant, scoreBoard) {
-      this.setState({
-        round: round,
-        selectedParticipant: selectedParticipant,
-        scoreBoard: scoreBoard
-      });
+    key: 'update',
+    value: function update(updateObj) {
+      this.setState(updateObj);
     }
   }, {
     key: 'render',
     value: function render() {
 
-      var scoreBoardDom = _react2.default.createElement(
-        'h1',
-        null,
-        'Awaiting Scores'
-      );
-      if (this.state.scoreBoard.length) {
-        scoreBoardDom = this.state.scoreBoard.map(function (sb) {
-          return _react2.default.createElement(
-            'li',
-            null,
-            _react2.default.createElement(
-              'span',
-              null,
-              sb.participant
-            ),
-            _react2.default.createElement(
-              'span',
-              null,
-              sb.score
-            )
-          );
-        });
+      var goldenRoundNextDom = "";
+      if (this.state.goldenRoundNext) {
+        goldenRoundNextDom = _react2.default.createElement(
+          'div',
+          { className: 'goldenround' },
+          _react2.default.createElement(
+            'h2',
+            { className: 'heading' },
+            'Golden Round Imminent!!'
+          )
+        );
       }
 
       var selectedParticipantDom = _react2.default.createElement(
@@ -10331,24 +10317,60 @@ var Root = function (_React$Component) {
         selectedParticipantDom = _react2.default.createElement(
           'div',
           { className: 'winner' },
+          goldenRoundNextDom,
           _react2.default.createElement(
             'h2',
-            { className: 'heading' },
-            'Round ',
-            this.state.round
-          ),
-          _react2.default.createElement(
-            'h2',
-            { className: 'heading' },
+            null,
             'Winner: ',
             this.state.selectedParticipant.participant,
-            '!'
-          ),
-          _react2.default.createElement(
-            'h3',
-            { className: 'heading' },
-            'Score: ',
+            '!  Score: ',
             this.state.selectedParticipant.score
+          )
+        );
+      }
+
+      var scoreBoardDom = _react2.default.createElement(
+        'h1',
+        null,
+        'Awaiting Scores'
+      );
+      if (this.state.scoreBoard.length) {
+        scoreBoardDom = _react2.default.createElement(
+          'div',
+          { className: 'raffle_score_board' },
+          _react2.default.createElement(
+            'table',
+            null,
+            _react2.default.createElement(
+              'tr',
+              { className: 'scoreheader' },
+              _react2.default.createElement(
+                'th',
+                null,
+                'Participant'
+              ),
+              _react2.default.createElement(
+                'th',
+                null,
+                'Score'
+              )
+            ),
+            this.state.scoreBoard.map(function (sb) {
+              return _react2.default.createElement(
+                'tr',
+                { className: 'scoreresults' },
+                _react2.default.createElement(
+                  'td',
+                  null,
+                  sb.participant
+                ),
+                _react2.default.createElement(
+                  'td',
+                  null,
+                  sb.score
+                )
+              );
+            })
           )
         );
       }
@@ -10357,17 +10379,28 @@ var Root = function (_React$Component) {
         'div',
         null,
         _react2.default.createElement(
+          'h2',
+          { className: 'round' },
+          'Round ',
+          _react2.default.createElement(
+            'u',
+            null,
+            this.state.round
+          ),
+          ' ',
+          _react2.default.createElement(
+            'i',
+            null,
+            'Next Draw In!'
+          )
+        ),
+        _react2.default.createElement(
           'h1',
           { className: 'countdown' },
           _react2.default.createElement(
             'div',
             null,
             _react2.default.createElement(_reactCountdownNow2.default, { date: Date.now() + 1000 * 20 })
-          ),
-          _react2.default.createElement(
-            'div',
-            null,
-            'Until Next Draw!'
           )
         ),
         selectedParticipantDom,
@@ -10376,25 +10409,7 @@ var Root = function (_React$Component) {
           null,
           'Raffle Scores:'
         ),
-        _react2.default.createElement(
-          'ul',
-          { className: 'raffle_score_board' },
-          _react2.default.createElement(
-            'li',
-            null,
-            _react2.default.createElement(
-              'span',
-              null,
-              'Participant'
-            ),
-            _react2.default.createElement(
-              'span',
-              null,
-              'Score'
-            )
-          ),
-          scoreBoardDom
-        )
+        scoreBoardDom
       );
     }
   }]);
@@ -10417,7 +10432,7 @@ window.onload = function () {
     // event data
     console.log(obj.update);
 
-    component.updateBackendText(obj.update.round, obj.update.selectedParticipant, obj.update.scoreBoard);
+    component.update(obj.update);
   };
 };
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(50)))
@@ -13321,7 +13336,7 @@ exports = module.exports = __webpack_require__(90)(undefined);
 
 
 // module
-exports.push([module.i, "@font-face {\r\n    font-family: 'Roboto';\r\n    src: url(" + __webpack_require__(201) + ") format(\"truetype\");\r\n}\r\n\r\nbody {\r\n  height: 100%;\r\n  width: 100%;\r\n  display: flex;\r\n  position: fixed;\r\n  align-items: center;\r\n  justify-content: center;\r\n  font-family: Roboto;\r\n  background: #ba42ff;\r\n}\r\n\r\n.heading {\r\n  color: #3a2c38;\r\n}\r\n", ""]);
+exports.push([module.i, "body {\r\n  height: 100%;\r\n  width: 100%;\r\n  display: flex;\r\n  position: fixed;\r\n  align-items: center;\r\n  justify-content: center;\r\n  font-family: Roboto;\r\n  background: #222222;\r\n  color: #e9e9e9;\r\n  margin: 0;\r\n}\r\n\r\n.countdown {\r\n  font-size: 150px;\r\n  font-weight: 900;\r\n}\r\n\r\n.countdowntext {\r\n  font-size: 25px;\r\n  font-weight: 900;\r\n}\r\n\r\n.winner {\r\n  font-size: 50px;\r\n  color: lightskyblue;\r\n}\r\n\r\n.round {\r\n  font-size: 50px;\r\n}\r\n\r\n.goldenround {\r\n  font-size: 50px;\r\n  color: gold;\r\n}\r\n\r\nh1, h2, h3 {\r\n  margin: 0;\r\n}\r\n\r\n.raffle_score_board {\r\n  list-style: none;\r\n}\r\n\r\n.raffle_score_board th, \r\n.raffle_score_board td { \r\n  width: 500px;\r\n}\r\n\r\n.raffle_score_board td:last-child {\r\n  text-align: center;\r\n}\r\n\r\n.raffle_score_board th:first-child {\r\n  text-align: left;\r\n}\r\n\r\n.scoreheader {\r\n  font-size: 40px;\r\n}", ""]);
 
 // exports
 
@@ -16073,7 +16088,7 @@ function stubFalse() {
 
 module.exports = isEqual;
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(50), __webpack_require__(202)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(50), __webpack_require__(201)(module)))
 
 /***/ }),
 /* 108 */
@@ -27626,12 +27641,6 @@ if(false) {
 
 /***/ }),
 /* 201 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = __webpack_require__.p + "7b5fb88f12bec8143f00e21bc3222124.ttf";
-
-/***/ }),
-/* 202 */
 /***/ (function(module, exports) {
 
 module.exports = function(module) {
@@ -27659,7 +27668,7 @@ module.exports = function(module) {
 
 
 /***/ }),
-/* 203 */
+/* 202 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__(85);

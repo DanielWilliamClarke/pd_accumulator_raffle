@@ -12,68 +12,74 @@ class Root extends React.Component {
     // Define the initial state:
     this.state = {
       round: 0,
+      goldenRoundNext: false,
       selectedParticipant: null,
       scoreBoard: []
     };
   }
 
-  updateBackendText(round, selectedParticipant, scoreBoard) {
-    this.setState({
-      round: round,
-      selectedParticipant: selectedParticipant,
-      scoreBoard: scoreBoard
-    });
+  update(updateObj) {
+    this.setState(updateObj);
   }
   
   render() {
-
-    let scoreBoardDom = <h1>Awaiting Scores</h1>
-    if(this.state.scoreBoard.length) {
-      scoreBoardDom = this.state.scoreBoard.map(sb => {
-        return <li>
-          <span>
-            {sb.participant}
-          </span>
-          <span>
-            {sb.score}
-          </span>
-          </li>
-      })
-    }
     
+    let goldenRoundNextDom = ""
+    if(this.state.goldenRoundNext) {
+      goldenRoundNextDom = <div className="goldenround">
+        <h2 className="heading">
+          Golden Round Imminent!!
+        </h2>
+      </div>
+    }
+
     let selectedParticipantDom = <h1>Awaiting Winner</h1>
     if(this.state.selectedParticipant) {
       selectedParticipantDom = <div className="winner">
-        <h2 className="heading">
-          Round {this.state.round}
+        {goldenRoundNextDom}
+        <h2>
+          Winner: {this.state.selectedParticipant.participant}!  Score: {this.state.selectedParticipant.score}  
         </h2>
-        <h2 className="heading">
-          Winner: {this.state.selectedParticipant.participant}! 
-        </h2>
-        <h3 className="heading">
-          Score: {this.state.selectedParticipant.score}
-        </h3>
       </div>
+    }
+
+    let scoreBoardDom = <h1>Awaiting Scores</h1>
+    if(this.state.scoreBoard.length) {
+      scoreBoardDom = <div className="raffle_score_board">
+        <table>
+          <tr className="scoreheader">
+            <th>Participant</th>
+            <th>Score</th>
+          </tr>
+          {this.state.scoreBoard.map(sb => {
+            return <tr className="scoreresults">
+              <td>
+                {sb.participant}
+              </td>
+              <td >
+                {sb.score}
+              </td>
+              </tr>
+          })}
+        </table>    
+      </div>    
     }
 
     return(
       <div>
+        <h2 className="round">
+          Round <u>{this.state.round}</u> <i>Next Draw In!</i>
+        </h2>
         <h1 className="countdown">
           <div>
             <Countdown date={Date.now() + (1000 * 20)} /> 
-          </div>
-          <div>
-            Until Next Draw!
           </div>
         </h1>
 
         {selectedParticipantDom}
         
-        <h1>Raffle Scores:</h1>
-        <ul className="raffle_score_board">
-          <li><span>Participant</span><span>Score</span></li>
-          {scoreBoardDom}
-        </ul>
+        <h1>Raffle Scores:</h1>  
+        {scoreBoardDom}
       </div>
     )
   }
@@ -94,10 +100,7 @@ window.onload = function () {
     // event data
     console.log(obj.update);
 
-    component.updateBackendText(
-      obj.update.round,
-      obj.update.selectedParticipant,
-      obj.update.scoreBoard)
+    component.update(obj.update)
   }
 }
 

@@ -1,8 +1,3 @@
-@font-face {
-    font-family: 'Roboto';
-    src: url(./Roboto-Light.ttf) format("truetype");
-}
-
 body {
   height: 100%;
   width: 100%;
@@ -11,9 +6,56 @@ body {
   align-items: center;
   justify-content: center;
   font-family: Roboto;
-  background: #ba42ff;
+  background: #222222;
+  color: #e9e9e9;
+  margin: 0;
 }
 
-.heading {
-  color: #3a2c38;
+.countdown {
+  font-size: 150px;
+  font-weight: 900;
+}
+
+.countdowntext {
+  font-size: 25px;
+  font-weight: 900;
+}
+
+.winner {
+  font-size: 50px;
+  color: lightskyblue;
+}
+
+.round {
+  font-size: 50px;
+}
+
+.goldenround {
+  font-size: 50px;
+  color: gold;
+}
+
+h1, h2, h3 {
+  margin: 0;
+}
+
+.raffle_score_board {
+  list-style: none;
+}
+
+.raffle_score_board th, 
+.raffle_score_board td { 
+  width: 500px;
+}
+
+.raffle_score_board td:last-child {
+  text-align: center;
+}
+
+.raffle_score_board th:first-child {
+  text-align: left;
+}
+
+.scoreheader {
+  font-size: 40px;
 }
