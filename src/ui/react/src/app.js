@@ -78,10 +78,8 @@ class Root extends React.Component {
             <Countdown date={Date.now() + (1000 * 20)} /> 
           </div>
         </h1>
-
         {selectedParticipantDom}
-        
-        <h1>Raffle Scores:</h1>  
+        <hr />
         {scoreBoardDom}
       </div>
     )

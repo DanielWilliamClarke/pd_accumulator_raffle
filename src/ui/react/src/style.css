@@ -52,6 +52,26 @@ h1, h2, h3 {
   text-align: center;
 }
 
+.raffle_score_board tr:nth-child(2) {
+  color: #57E86B;
+  font-size: 40px;
+}
+
+.raffle_score_board tr:nth-child(3) {
+  color: #78EC6C;
+  font-size: 35px;
+}
+
+.raffle_score_board tr:nth-child(4) {
+  color:  #A9F36A;
+  font-size: 31px;
+}
+
+.raffle_score_board tr:nth-child(5) {
+  color: #DDF969;
+  font-size: 28px;
+}
+
 .raffle_score_board th:first-child {
   text-align: left;
 }
