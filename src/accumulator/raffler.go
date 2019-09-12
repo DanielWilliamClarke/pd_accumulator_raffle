@@ -16,9 +16,14 @@ type RaffleUpdate struct {
 
 type RaffleUpdateAttributes struct {
 	Round               int                 `json:"round"`
-	GoldenRoundNext     bool                `json:"goldenRoundNext"`
+	GoldenRound         GoldenRound         `json:"goldenRound"`
 	SelectedParticipant PartiticpantScore   `json:"selectedParticipant"`
 	ScoreBoard          []PartiticpantScore `json:"scoreBoard"`
+}
+
+type GoldenRound struct {
+	Next bool `json:"next"`
+	Now  bool `json:"now"`
 }
 
 type PartiticpantScore struct {
@@ -52,7 +57,7 @@ func (r Raffler) Run() {
 
 	elaspedTime := time.Duration(0)
 	regularInterval := 20 * time.Second
-	goldenInterval := 300 * time.Second
+	goldenInterval := 40 * time.Second
 
 	for {
 
@@ -68,9 +73,11 @@ func (r Raffler) Run() {
 			goldenRoundNext = true
 		}
 		scoreIncrement := 1
+		isGoldenRound := false
 		if elaspedTime == goldenInterval {
 			scoreIncrement = 5
 			elaspedTime = 0
+			isGoldenRound = true
 		}
 
 		log.Println("Selecting Participant At Random")
@@ -88,8 +95,11 @@ func (r Raffler) Run() {
 		r.Window.Send(&RaffleUpdate{
 			Event: &gotron.Event{Event: "raffle-update"},
 			Update: RaffleUpdateAttributes{
-				Round:               round,
-				GoldenRoundNext:     goldenRoundNext,
+				Round: round,
+				GoldenRound: GoldenRound{
+					Next: goldenRoundNext,
+					Now:  isGoldenRound,
+				},
 				SelectedParticipant: r.Participants[participantIndex],
 				ScoreBoard:          scoreBoard,
 			},

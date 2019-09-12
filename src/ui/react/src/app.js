@@ -12,7 +12,10 @@ class Root extends React.Component {
     // Define the initial state:
     this.state = {
       round: "-",
-      goldenRoundNext: false,
+      goldenRound: {
+        next: false,
+        now: false
+      },
       selectedParticipant: null,
       scoreBoard: []
     };
@@ -25,20 +28,20 @@ class Root extends React.Component {
   render() {
     
     let goldenRoundNextDom = ""
-    if(this.state.goldenRoundNext) {
+    if(this.state.goldenRound.next || this.state.goldenRound.now) {
       goldenRoundNextDom = <div className="goldenround">
         <h2 className="heading">
-          Golden Round Imminent!!
+          Golden Round{!this.state.goldenRound.now ? " Imminent": ""}!!
         </h2>
       </div>
     }
 
     let selectedParticipantDom = <h1>Awaiting Winner</h1>
     if(this.state.selectedParticipant) {
-      selectedParticipantDom = <div className="winner">
+      selectedParticipantDom = <div className={this.state.goldenRound.now ? "goldenround": "winner"}>
         {goldenRoundNextDom}
         <h2>
-          Winner: {this.state.selectedParticipant.participant}!  Score: {this.state.selectedParticipant.score}  
+          Winner: {this.state.selectedParticipant.participant}! Score: {this.state.selectedParticipant.score}  
         </h2>
       </div>
     }
