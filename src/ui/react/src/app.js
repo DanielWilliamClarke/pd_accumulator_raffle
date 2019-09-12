@@ -23,6 +23,8 @@ class Root extends React.Component {
 
   update(updateObj) {
     this.setState(updateObj);
+    // Force a render without state change...
+    this.forceUpdate();
   }
   
   render() {
@@ -48,24 +50,20 @@ class Root extends React.Component {
 
     let scoreBoardDom = <h1>Awaiting Scores</h1>
     if(this.state.scoreBoard.length) {
-      scoreBoardDom = <div className="raffle_score_board">
-        <table>
+      scoreBoardDom = <table className="raffle_score_board">
+        <tbody>
           <tr className="scoreheader">
             <th>Participant</th>
             <th>Score</th>
           </tr>
-          {this.state.scoreBoard.map(sb => {
-            return <tr className="scoreresults">
-              <td>
-                {sb.participant}
-              </td>
-              <td >
-                {sb.score}
-              </td>
-              </tr>
+          {this.state.scoreBoard.map((sb, i) => {
+            return <tr className="scoreresults" key={i}>
+              <td>{sb.participant}</td>
+              <td>{sb.score}</td>
+            </tr>
           })}
-        </table>    
-      </div>    
+        </tbody>
+      </table>    
     }
 
     return(
