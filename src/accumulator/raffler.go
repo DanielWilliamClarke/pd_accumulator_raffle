@@ -9,28 +9,36 @@ import (
 	"github.com/Equanox/gotron"
 )
 
-type RaffleUpdate struct {
+type raffleUpdate struct {
 	*gotron.Event
-	Update RaffleUpdateAttributes `json:"update"`
+	Update raffleUpdateAttributes `json:"update"`
 }
 
-type RaffleUpdateAttributes struct {
+type raffleUpdateAttributes struct {
 	Round               int                 `json:"round"`
-	GoldenRound         GoldenRound         `json:"goldenRound"`
+	GoldenRound         goldenRound         `json:"goldenRound"`
 	SelectedParticipant PartiticpantScore   `json:"selectedParticipant"`
 	ScoreBoard          []PartiticpantScore `json:"scoreBoard"`
 }
 
-type GoldenRound struct {
+type goldenRound struct {
 	Next bool `json:"next"`
 	Now  bool `json:"now"`
 }
 
+// PartiticpantScore links pariticpant names to a score
 type PartiticpantScore struct {
 	Participant string `json:"participant"`
 	Score       int    `json:"score"`
 }
 
+type raffleTimer struct {
+	elaspedTime     time.Duration
+	regularInterval time.Duration
+	goldenInterval  time.Duration
+}
+
+// ParseParticiapants transforms array names into partiticpantScore structs
 func ParseParticiapants(participants []string) (ps []PartiticpantScore) {
 	for _, p := range participants {
 		ps = append(ps, PartiticpantScore{
@@ -41,68 +49,80 @@ func ParseParticiapants(participants []string) (ps []PartiticpantScore) {
 	return ps
 }
 
-type Raffler struct {
-	Participants []PartiticpantScore
-	Window       *gotron.BrowserWindow
+// NewRaffle raffle constructor
+func NewRaffle(window *gotron.BrowserWindow) Raffler {
+	return Raffler{
+		window: window,
+		timings: raffleTimer{
+			elaspedTime:     0,
+			regularInterval: 20 * time.Second,
+			goldenInterval:  300 * time.Second,
+		},
+	}
 }
 
-func (r Raffler) Run() {
+// Raffler provides functionality to run raffle accumulator
+type Raffler struct {
+	window  *gotron.BrowserWindow
+	timings raffleTimer
+	round   int
+}
+
+// Run runs raffle loop
+func (r Raffler) Run(participants []PartiticpantScore) {
 
 	log.Println("Starting Accumulator Raffle")
-
-	s1 := rand.NewSource(time.Now().UnixNano())
-	r1 := rand.New(s1)
-
-	round := 0
-
-	elaspedTime := time.Duration(0)
-	regularInterval := 20 * time.Second
-	goldenInterval := 300 * time.Second
+	rand.Seed(time.Now().UnixNano())
 
 	for {
 
-		time.Sleep(regularInterval)
+		time.Sleep(r.timings.regularInterval)
 
-		round++
-		elaspedTime += regularInterval
-		log.Printf("Round: %d --------------------------------------- Time Elapsed: %s", round, elaspedTime)
+		r.round++
+		r.timings.elaspedTime += r.timings.regularInterval
+		log.Printf("Round: %d --------------------------------------- Time Elapsed: %s", r.round, r.timings.elaspedTime)
 
-		goldenRoundNext := false
-		if elaspedTime == goldenInterval-regularInterval {
-			log.Printf("Golden Round in %s seconds", regularInterval)
-			goldenRoundNext = true
-		}
-		scoreIncrement := 1
-		isGoldenRound := false
-		if elaspedTime == goldenInterval {
-			scoreIncrement = 5
-			elaspedTime = 0
-			isGoldenRound = true
-		}
+		// Determine score and golden round
+		goldenRound, score := r.determineScore()
 
+		// Select particiapnt and award
 		log.Println("Selecting Participant At Random")
-		participantIndex := r1.Intn(len(r.Participants))
+		participantIndex := rand.Intn(len(participants))
 
-		log.Printf("Selected %s", r.Participants[participantIndex].Participant)
-		r.Participants[participantIndex].Score += scoreIncrement
+		log.Printf("Selected %s", participants[participantIndex].Participant)
+		participants[participantIndex].Score += score
 
-		scoreBoard := append(r.Participants[:0:0], r.Participants...)
+		scoreBoard := append(participants[:0:0], participants...)
 		sort.Slice(scoreBoard, func(i, j int) bool {
 			return scoreBoard[i].Score > scoreBoard[j].Score
 		})
 
+		// Publish update on websocket
 		log.Println("Publishing Update To WebSocket")
-		r.Window.Send(&RaffleUpdate{
+		r.window.Send(&raffleUpdate{
 			Event: &gotron.Event{Event: "raffle-update"},
-			Update: RaffleUpdateAttributes{
-				Round: round,
-				GoldenRound: GoldenRound{
-					Next: goldenRoundNext,
-					Now:  isGoldenRound,
-				},
-				SelectedParticipant: r.Participants[participantIndex],
+			Update: raffleUpdateAttributes{
+				Round:               r.round,
+				GoldenRound:         goldenRound,
+				SelectedParticipant: participants[participantIndex],
 				ScoreBoard:          scoreBoard,
 			},
 		})
 	}
+}
+
+func (r Raffler) determineScore() (goldenRound, int) {
+	goldenRoundStatus := goldenRound{}
+	if r.timings.elaspedTime == r.timings.goldenInterval-r.timings.regularInterval {
+		log.Printf("Golden Round in %s seconds", r.timings.regularInterval)
+		goldenRoundStatus.Next = true
+	}
+	scoreIncrement := 1
+	if r.timings.elaspedTime == r.timings.goldenInterval {
+		log.Println("Golden Round!!!!")
+		r.timings.elaspedTime = 0
+		scoreIncrement = 5
+		goldenRoundStatus.Now = true
+	}
+	return goldenRoundStatus, scoreIncrement
 }

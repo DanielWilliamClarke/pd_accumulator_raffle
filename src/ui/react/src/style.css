@@ -43,6 +43,10 @@ h1, h2, h3 {
   list-style: none;
 }
 
+.scoreheader {
+  font-size: 40px;
+}
+
 .raffle_score_board th, 
 .raffle_score_board td { 
   width: 500px;
@@ -51,6 +55,8 @@ h1, h2, h3 {
 .raffle_score_board td:last-child {
   text-align: center;
 }
+
+/* Set colors for top slots */
 
 .raffle_score_board tr:nth-child(2) {
   color: #57E86B;
@@ -72,10 +78,12 @@ h1, h2, h3 {
   font-size: 28px;
 }
 
+.raffle_score_board tr:nth-child(6) {
+  color: #FEFE69;
+  font-size: 26px;
+}
+
 .raffle_score_board th:first-child {
   text-align: left;
 }
 
-.scoreheader {
-  font-size: 40px;
-}
