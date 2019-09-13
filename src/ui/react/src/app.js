@@ -105,7 +105,7 @@ window.onload = function () {
   //Reload on keypress 'r'
 document.addEventListener('keyup', function(e){
   if(e.keyCode == 82)
-    window.location.reload();
+    component.forceUpdate()
   })
 }
 
