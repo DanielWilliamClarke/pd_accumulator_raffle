@@ -53,8 +53,8 @@ func ParseParticiapants(participants []string) (ps []PartiticpantScore) {
 func NewRaffle(window *gotron.BrowserWindow) Raffler {
 	return Raffler{
 		window: window,
-		timings: raffleTimer{
-			elaspedTime:     0,
+		timings: &raffleTimer{
+			elaspedTime:     0 * time.Second,
 			regularInterval: 20 * time.Second,
 			goldenInterval:  300 * time.Second,
 		},
@@ -64,7 +64,7 @@ func NewRaffle(window *gotron.BrowserWindow) Raffler {
 // Raffler provides functionality to run raffle accumulator
 type Raffler struct {
 	window  *gotron.BrowserWindow
-	timings raffleTimer
+	timings *raffleTimer
 	round   int
 }
 
@@ -78,11 +78,11 @@ func (r Raffler) Run(participants []PartiticpantScore) {
 
 		time.Sleep(r.timings.regularInterval)
 
+		// Determine score and golden round
 		r.round++
 		r.timings.elaspedTime += r.timings.regularInterval
-		log.Printf("Round: %d --------------------------------------- Time Elapsed: %s", r.round, r.timings.elaspedTime)
 
-		// Determine score and golden round
+		log.Printf("Round: %d --------------------------------------- Time Elapsed: %s", r.round, r.timings.elaspedTime)
 		goldenRound, score := r.determineScore()
 
 		// Select particiapnt and award
@@ -118,9 +118,9 @@ func (r Raffler) determineScore() (goldenRound, int) {
 		goldenRoundStatus.Next = true
 	}
 	scoreIncrement := 1
-	if r.timings.elaspedTime == r.timings.goldenInterval {
+	if r.timings.elaspedTime >= r.timings.goldenInterval {
 		log.Println("Golden Round!!!!")
-		r.timings.elaspedTime = 0
+		r.timings.elaspedTime = 0 * time.Second
 		scoreIncrement = 5
 		goldenRoundStatus.Now = true
 	}
