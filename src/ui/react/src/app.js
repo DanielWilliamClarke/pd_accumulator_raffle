@@ -53,7 +53,7 @@ class Root extends React.Component {
       scoreBoardDom = <table className="raffle_score_board">
         <tbody>
           <tr className="scoreheader">
-            <th>Participant</th>
+            <th>Player</th>
             <th>Score</th>
           </tr>
           {this.state.scoreBoard.map((sb, i) => {
